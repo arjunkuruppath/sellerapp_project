@@ -55,3 +55,4 @@ def profile_view(request):
 
 def post_product(request):
     return render(request,'post_product.html')
+    print("hi")
