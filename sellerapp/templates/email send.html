@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+    <style>
+        #a{
+        height:300px;
+        width:1000px;
+        background-color:lightblue;
+        margin-left:200px;
+        margin-top:150px;
+        text-align:center;
+        }
+    </style>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<div id="a">
+<img src="{% static 'image/check-mark-tick-vector-graphic-21.png' %}" height="100px;" width="100px;">
+    <h1>
+        Registration completed successfully
+    </h1>
+    <p>
+        please check your email verification
+    </p>
+    <button type="button" >ok</button>
+</div>
+</body>
+</html>
