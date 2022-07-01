@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+   <section class="section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="fw-bold">Edit Product Details</h2>
+                    </div>
+                    <div class="card-body">
+                        <form action="{% url 'post_product' %}" method="POST" enctype="multipart/form-data"> {% csrf_token %}
+                            <div class="mb-3">
+                                <label  class="form-label">Product Name</label>
+                                <input type="text" Required name="product_name" class="form-control" value="{{ data.product_name }}">
+                            </div>
+                            <div class="mb-3">
+                                <label  class="form-label">Product Descritpion</label>
+                                <input type="text" Required name="product_desc" class="form-control" value="{{ data.product_desc }}">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" >Choose a Category:</label>
+                                    <select name="category" value="{{ data.category }}">
+                                      <option value="Electronic appliances" name="category">Electronic appliances</option>
+                                      <option value="Vehicle" name="category" >Vehicle</option>
+                                      <option value="Home and Furniture" name="category" >Home and Furniture</option>
+                                      <option value="Cloths" name="category" >Cloths</option>
+                                    </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Location</label>
+                                <input type="text" Required name="location" class="form-control" value="{{ data.location }}">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Product Price</label>
+                                <input type="number" Required name="product_price" class="form-control" value="{{ data.product_price }}">
+                            </div>
+                             <div class="mb-3">
+                                <label  class="form-label">Product Image</label>
+                                <input type="file" Required name="product_img" class="form-control" value="{{ data.product_img }}">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Update</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+ <a href="{% url 'indexpage' %}" >Back to home</a>
+</body>
+</html>

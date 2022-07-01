@@ -33,7 +33,7 @@
     color: #fff;
 }
 </style>
-<form method="post">{% csrf_token %}
+<form method="post" enctype="multipart/form-data">{% csrf_token %}
 <div class="container register-form" style="margin-top:100px;">
             <div class="form">
                 <div class="note">
@@ -44,10 +44,10 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <input type="text" class="form-control" placeholder="User Name *" name="usname" required/>
+                                <input type="text" class="form-control" placeholder="User Name *" name="username" required/>
                             </div>
                             <div class="form-group">
-                                <input type="text" class="form-control" placeholder="Your Name *" name="name" required/>
+                                <input type="text" class="form-control" placeholder="Your Name *" name="firstname" required/>
                             </div>
                             <div class="form-group">
                                 <input type="number" class="form-control" placeholder="Phone Number *" name="phone" required/>
@@ -58,17 +58,23 @@
                                 <input type="email" class="form-control" placeholder="Your Emailid *" name="email" required/>
                             </div>
                             <div class="form-group">
-                                <input type="password" class="form-control" placeholder="Your Password *" name="pswd" required/>
+                                <input type="password" id="password1" class="form-control" placeholder="Your Password *" name="password" />
                             </div>
                             <div class="form-group">
-                                <input type="password" class="form-control" placeholder="Confirm Password *" name="cpswd" required/>
+                                <input type="password" class="form-control" id="password2" placeholder="Confirm Password *" name="cpassword" />
                             </div>
                         </div>
                     </div>
+                    Profile Image <input type="file" class="profileimage" name="profile" required/>
                     <center><button type="submit" class="btnSubmit">Submit</button></center><br>
-                    <p>Already have account &nbsp;<a href="http://127.0.0.1:8000/sellapp/log/">login here</a> </p><br>
+                    <p>Already have account &nbsp;<a href="http://127.0.0.1:8000/log/">login here</a> </p><br>
 
                 </div>
             </div>
         </div>
 </form>
+<div>
+    {% for messages in messages  %}
+        <h3>{{messages}}</h3>
+    {% endfor %}
+</div>

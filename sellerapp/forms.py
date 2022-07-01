@@ -1,13 +1,20 @@
 from django import forms
+from django.forms import ModelForm
 
-class regform(forms.Form):
-    usname=forms.CharField(max_length=30)
-    name=forms.CharField(max_length=30)
-    phone=forms.IntegerField()
-    email=forms.EmailField()
-    pswd=forms.CharField(max_length=20)
-    cpswd=forms.CharField(max_length=20)
+from .models import User
 
-class logform(forms.Form):
-    email=forms.CharField(max_length=30)
-    pswd=forms.CharField(max_length=20)
+
+class UserForm(ModelForm):
+    class Meta:
+        model = User
+        fields = ['username', 'name', 'email', 'phone','profile']
+
+class UserUpdateForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['username','email']
+
+class ProfileUpdateForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['name','phone','profile']
