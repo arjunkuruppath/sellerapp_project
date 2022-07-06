@@ -60,6 +60,7 @@
                             <p>Location: {{ product1.location }}</p>
                         </div>
                         <button><a href="{% url 'edit_post_confirm' product1.id %}">Edit Details</a></button>
+                        <button><a href="{% url 'buyer_list' product1.id %}">View Buyers list</a></button>
                     </div></div>
                     {% endfor %}
                 </div>

@@ -220,3 +220,26 @@ def applied_product(request):
         li.append(product_details)
     print(product_details)
     return render(request, "applied_product.html", {'BuyProduct': li})
+
+
+def buyer_list(request,id):
+    data = BuyProduct.objects.filter(product_id=id)
+    product_name = Product.objects.get(id=id)
+    print(product_name)
+    return render(request,'buyer_list.html',{'obj' : data , 'product_name' : product_name })
+
+
+def accept_interest(request,id,pk):
+    buy_product = BuyProduct.objects.get(id=id)
+    print(pk,id)
+    seller_name = buy_product.seller_name
+    product_name = Product.objects.get(id=pk)
+    buyer_price = buy_product.buyer_price
+    buyer_name = buy_product.buyer_name
+    buyer_email = Product.objects.get(id=pk).userid.email
+    print(seller_name,buyer_price,buyer_name)
+    subject = f"Hi {buyer_name}"
+    message = f'{seller_name} has accepted your request to buy {product_name} for {buyer_price}'
+    recepient = buyer_email
+    send_mail(subject, message, settings.EMAIL_HOST_USER, [recepient], fail_silently=False)
+    return redirect('indexpage')

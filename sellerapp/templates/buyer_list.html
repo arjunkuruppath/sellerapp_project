@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<table class='table table-primary table-striped'>
+            <tr>
+                <th>BUYER NAME</th>
+                <th>PRODUCT NAME</th>
+                <th>INTERESTED PRICE</th>
+                <th>STATUS</th>
+                <th>ACCEPT</th>
+            </tr>
+            <tr>
+                {% for i in obj %}
+            <tr>
+                <td>{{i.buyer_name}}</td>
+                <td>{{product_name}}</td>
+                <td>{{i.buyer_price}}</td>
+                <td>{{i.buy_status}}</td>
+                <td>
+                    <a href="{% url 'accept_interest' i.id product_name.id %}" class="btn btn-success badge">ACCEPT</a>
+                </td>
+            </tr>
+            {% endfor %}
+            </tr>
+            <br>
+        </table>
+</body>
+</html>

@@ -34,8 +34,9 @@ urlpatterns = [
     path('edit_post_confirm/<id>/', edit_post_confirm, name='edit_post_confirm'),
     path('edit_post/<id>', edit_post, name='edit_post'),
     path('sendmail/<id>', sendmail, name='sendmail'),
-
     path('applied_product/', applied_product, name='applied_product'),
+    path('buyer_list/<id>/', buyer_list, name='buyer_list'),
+    path('accept_interest/<id>/<pk>/', accept_interest, name='accept_interest'),
 
     path('reset_password/',
          auth_views.PasswordResetView.as_view(template_name="accounts/password_reset.html"),
