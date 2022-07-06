@@ -1,32 +1,78 @@
-<!DOCTYPE html>
+{% load static %}
+<! DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <meta name="description" content=""/>
+    <meta name="author" content=""/>
+    <title>Shop Homepage - Start Bootstrap Template</title>
+    <!-- Favicon-->
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico"/>
+    <!-- Bootstrap icons-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet"/>
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <!--        <link href="{% static 'dict/css/styles.css' %}" rel="stylesheet" />-->
+    <link rel="stylesheet" href="{% static 'dist/css/styles.css' %}" type="text/css"/>
 </head>
 <body>
-<table class='table table-primary table-striped'>
-            <tr>
-                <th>BUYER NAME</th>
-                <th>PRODUCT NAME</th>
-                <th>INTERESTED PRICE</th>
-                <th>STATUS</th>
-                <th>ACCEPT</th>
-            </tr>
-            <tr>
-                {% for i in obj %}
-            <tr>
-                <td>{{i.buyer_name}}</td>
-                <td>{{product_name}}</td>
-                <td>{{i.buyer_price}}</td>
-                <td>{{i.buy_status}}</td>
-                <td>
-                    <a href="{% url 'accept_interest' i.id product_name.id %}" class="btn btn-success badge">ACCEPT</a>
-                </td>
-            </tr>
-            {% endfor %}
-            </tr>
-            <br>
-        </table>
+<!-- Navigation-->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container px-4 px-lg-5">
+        <a class="navbar-brand" href="#!">Sell&Buy</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span
+                class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
+                <li class="nav-item"><a class="nav-link active" aria-current="page"
+                                        href="{% url 'indexpage' %}">Home</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<!-- Header-->
+<header class="bg-success py-5">
+    <div class="container px-4 px-lg-5 my-5">
+        <div class="text-center text-white">
+            <h1 class="display-4 fw-bolder">Shop in style</h1>
+            <p class="lead fw-normal text-white-50 mb-0">With this Sell&Buy Website</p>
+        </div>
+    </div>
+</header>
+<table class='table table-primary table-striped' border="1">
+    <tr>
+        <th>BUYER NAME</th>
+        <th>PRODUCT NAME</th>
+        <th>INTERESTED PRICE</th>
+        <th>STATUS</th>
+        <th>ACCEPT</th>
+    </tr>
+    <tr>
+        {% for i in obj %}
+    <tr>
+        <td>{{i.buyer_name}}</td>
+        <td>{{product_name}}</td>
+        <td>{{i.buyer_price}}</td>
+        <td>{{i.buy_status}}</td>
+        <td>
+            <a href="{% url 'accept_interest' i.id product_name.id %}" class="btn btn-success badge">ACCEPT</a>
+        </td>
+    </tr>
+    {% endfor %}
+    </tr>
+    <br>
+</table>
+
+
+<!-- Footer-->
+<footer class="py-5 bg-success">
+    <div class="container"><p class="m-0 text-center text-white">Copyright &copy; Your Sell&Buy Website 2022</p></div>
+</footer>
+<!-- Bootstrap core JS-->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Core theme JS-->
+<script src="js/scripts.js"></script>
 </body>
 </html>
