@@ -1,9 +1,12 @@
 import os
+from django.conf.global_settings import EMAIL_HOST_USER
 from django.core.checks import messages
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.shortcuts import render, redirect
 # from .forms import EditForm
+
+
 from .models import *
 from django.http import HttpResponse
 # Create your views here.
@@ -12,16 +15,25 @@ from django.conf import settings
 from django.contrib.auth.models import auth
 from django.contrib.auth import logout, authenticate, login
 from datetime import datetime
+from django.contrib.auth.decorators import login_required
+
 
 # from .forms import UserUpdateForm,ProfileUpdateForm,UserForm
 
 def landing(request):
-    return render(request, 'landing.html')
+    data = Product.objects.all()
+    # print('data',data)
+    return render(request, 'index.html', {'data': data})
 
 
 def index(request):
-    data = Product.objects.all()
-    return render(request, "index.html", {'Product': data})
+    product_data = Product.objects.all()
+    user_data = User.objects.get(username=request.user)
+    context = {}
+    context['data'] = product_data
+    context['user_data'] = user_data
+    print(user_data.is_active)
+    return render(request, "index.html", context)
 
 
 def reg(request):
@@ -60,9 +72,9 @@ def log(request):
     if request.method == 'POST':
         email = request.POST['email']
         password = request.POST['password']
-        print(email, password)
+        # print(email, password)
         user = authenticate(username=email, password=password)
-        print(user)
+        # print(user)
         if user is not None:
             login(request, user)
             return redirect('indexpage')
@@ -72,15 +84,17 @@ def log(request):
     return render(request, "login.html")
 
 
+@login_required(login_url='/log/')
 def show_profile(request):
     data = User.objects.get(username=request.user)
-    print(data)
+    # print(data)
     return render(request, "show_profile.html", {'obj': data})
 
 
+@login_required(login_url='/log/')
 def edit_profile_confirm(request):
     data = User.objects.get(username=request.user)
-    print(data)
+    # print(data)
     if request.method == "POST":
         if len(request.FILES) != 0:
             if len(data.profile) > 0:
@@ -98,6 +112,7 @@ def edit_profile_confirm(request):
     return render(request, 'edit_profile.html', context)
 
 
+@login_required(login_url='/log/')
 def edit_profile(request):
     data = User.objects.get(username=request.user)
     return render(request, "edit_profile.html", {'obj': data})
@@ -109,6 +124,7 @@ def logoutfn(request):
     return redirect('landing')
 
 
+@login_required(login_url='/log/')
 def post_product(request):
     if request.method == 'POST':
         product_name = request.POST.get('product_name')
@@ -125,25 +141,39 @@ def post_product(request):
             user_id = ''
 
         Product(product_name=product_name, product_desc=product_desc, category=category, location=location,
-                product_price=product_price, product_img=product_img, time=formated_time,userid = user_id).save()
+                product_price=product_price, product_img=product_img, time=formated_time, userid=user_id).save()
+
+        SellerData(product_name=product_name,email=request.user.email,seller_name=request.user,seller_price=product_price).save()
         return redirect('indexpage')
 
     return render(request, 'post_product.html')
 
-def product_detail(request,id):
+
+@login_required(login_url='/log/')
+def product_detail(request, id):
     context = {}
     context["data"] = Product.objects.get(id=id)
     return render(request, "product_detail.html", context)
 
+
+@login_required(login_url='/log/')
 def my_post(request):
     userid = request.user
     data = Product.objects.filter(userid_id=request.user)
-    print(data)
-    return render(request, "my_post.html", {'Product': data , 'userid' : userid})
+    # print(data)
+    return render(request, "my_post.html", {'Product': data, 'userid': userid})
 
-def edit_post_confirm(request):
-    data = Product.objects.get(product_name=request.product_name)
-    print(data)
+
+def edit_post_confirm(request, id):
+    data = Product.objects.get(id=id)
+    # print(data)
+    return render(request, 'edit_post.html', {'data': data})
+
+
+@login_required(login_url='/log/')
+def edit_post(request, id):
+    data = Product.objects.get(id=id)
+    # print(data.id)
     if request.method == "POST":
         if len(request.FILES) != 0:
             if len(data.product_img) > 0:
@@ -157,12 +187,36 @@ def edit_post_confirm(request):
         data.save()
         messages.success(request, " Updated Successfully")
         return redirect('my_post')
+    else:
+        return render(request, 'edit_post.html')
 
-    context = {'data': data}
-    return render(request, 'edit_post.html', context)
+
+def sendmail(request, id):
+    if request.method == 'POST':
+        seller_name = Product.objects.get(id=id)
+        buyer_name = request.user
+        product_id = id
+        buyer_price = request.POST['show_interest']
+        buyer_status = False
+        BuyProduct(seller_name=seller_name.userid, buyer_name=buyer_name, product_id=product_id, buyer_price=buyer_price,
+                   buy_status=buyer_status).save()
+        recepient_mailid = seller_name.userid.email
+        subject = "This is Product interest message"
+        message = f'This is a verification msg ,interested product { seller_name.product_name } interested price { buyer_price}'
+        recepient =recepient_mailid
+        send_mail( subject,message,settings.EMAIL_HOST_USER, [recepient], fail_silently=False)
+        messages.success(request, "sucessfuly sent a approved mail")
+    #
+    return redirect('indexpage')
 
 
-def edit_post(request,id):
-    context = {}
-    context["data"] = Product.objects.get(id=id)
-    return render(request, "edit_post.html", context)
+def applied_product(request):
+    userid = request.user
+    data = BuyProduct.objects.filter(buyer_name=request.user).values('product_id')
+    li = []
+    for product_id in data:
+        print(product_id['product_id'])
+        product_details = Product.objects.get(id=product_id['product_id'])
+        li.append(product_details)
+    print(product_details)
+    return render(request, "applied_product.html", {'BuyProduct': li})

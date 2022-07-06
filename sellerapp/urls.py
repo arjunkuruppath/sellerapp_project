@@ -20,7 +20,7 @@ from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('',landing,name='landing'),
-    path('home/',index,name='indexpage'),
+    path('index/',index,name='indexpage'),
     path('reg/',reg,name='reg'),
     path('success/',eml,name='eml'),
     path('log/',log,name='log'),
@@ -28,12 +28,14 @@ urlpatterns = [
     path('edit_profile_confirm/', edit_profile_confirm, name='edit_profile_confirm'),
     path('edit_profile/', edit_profile, name='edit_profile'),
     path('logout/',logoutfn,name='logout'),
-
     path('post_product/', post_product, name='post_product'),
     path('product_detail/<id>/', product_detail, name='product_detail'),
     path('my_post/', my_post, name='my_post'),
-    path('edit_post_confirm/', edit_post_confirm, name='edit_post_confirm'),
-    path('edit_post/<id>/', edit_post, name='edit_post'),
+    path('edit_post_confirm/<id>/', edit_post_confirm, name='edit_post_confirm'),
+    path('edit_post/<id>', edit_post, name='edit_post'),
+    path('sendmail/<id>', sendmail, name='sendmail'),
+
+    path('applied_product/', applied_product, name='applied_product'),
 
     path('reset_password/',
          auth_views.PasswordResetView.as_view(template_name="accounts/password_reset.html"),

@@ -24,7 +24,7 @@
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
-                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="#!">Home</a></li>
+                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="{% url 'indexpage' %}">Home</a></li>
                     </ul>
                 </div>
             </div>
@@ -59,7 +59,7 @@
                             <p>Price: {{ product1.product_price }}</p>
                             <p>Location: {{ product1.location }}</p>
                         </div>
-                        <button><a href="{% url 'edit_post' product1.id %}">Edit Details</a></button>
+                        <button><a href="{% url 'edit_post_confirm' product1.id %}">Edit Details</a></button>
                     </div></div>
                     {% endfor %}
                 </div>

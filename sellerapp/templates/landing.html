@@ -39,10 +39,42 @@
                     <p class="lead fw-normal text-white-50 mb-0">With this Sell&Buy Website</p>
                 </div>
             </div>
-        </header><br><br><br><br>
-        <h1 style="text-align:center;">Welcome to Sell And Buy App</h1>
-        <br><br><br><br><br><br><br><br><br>
+        </header>
+<!--        <h1 style="text-align:center;">Welcome to Sell And Buy App</h1>-->
+<!--        <br><br><br><br><br><br><br><br><br>-->
         <!-- Footer-->
+
+<section class="py-5">
+<div class="container px-4 px-lg-5 mt-5">
+    <div class="row  gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+        {% for i in Product %}
+        <div class="col mb-5">
+            <form action="{% url 'indexpage' %}" method="post">
+            <div class="card h-10">
+                <!-- Product image-->
+                <img class="card-img-top" src="{{ i.product_img.url }}" alt="Image"/>
+                <!-- Product details-->
+                <div class="card-body p-4">
+                    <div class="text-center">
+                        <!-- Product name-->
+                        <h5 class="fw-bolder">{{ i.product_name }}</h5>
+                        <!-- Product price-->
+                        {{ i.product_price }}
+                    </div>
+                </div>
+                <!-- Product actions-->
+                <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                    <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="{% url 'product_detail' i.id %}">View options</a></div>
+                </div>
+            </div>
+            </form>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+</section>
+
+
         <footer class="py-5 bg-success">
             <div class="container"><p class="m-0 text-center text-white">Copyright &copy; Your Sell&Buy Website 2022</p></div>
         </footer>

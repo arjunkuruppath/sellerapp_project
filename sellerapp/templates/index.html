@@ -20,26 +20,34 @@
 <!-- Navigation-->
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container px-4 px-lg-5">
+          {% if user_data.is_active %}
+        <a class="navbar-brand" href="#!">Welcome {{ user.username }}</a>
+        {% else %}
         <a class="navbar-brand" href="#!">Sell&Buy</a>
+        {% endif %}
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
                 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span
                 class="navbar-toggler-icon"></span></button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
-                <li class="nav-item"><a class="nav-link active" aria-current="page" href="#!">Home</a></li>
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4"> {% if user_data.is_active %}
+                <li class="nav-item"><a class="nav-link active" aria-current="page" href="{% url 'indexpage' %}">Home</a></li>
 
                 <li class="nav-item"><a class="nav-link" href="{% url 'show_profile' %}">Profile</a></li>
 
                 <li class="nav-item"><a class="nav-link" href="{% url 'post_product' %}">Create Post</a></li>
                 <li class="nav-item"><a class="nav-link" href="{% url 'my_post' %}">My Post</a></li>
-                <li class="nav-item"><a class="nav-link" href="#!">Applied Products</a></li>
-                &nbsp;&nbsp;&nbsp;&nbsp;
+                <li class="nav-item"><a class="nav-link" href="{% url 'applied_product' %}">Applied Products</a></li>
+                &nbsp;&nbsp;&nbsp;{% endif %}
                 <li>
                  <form class="d-flex">
                     <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
                     <button class="btn btn-outline-success" type="submit">Search</button>
                 </form>
                 </li>
+                {% if not user_data.is_active %}
+                 <li class="nav-item"><a class="nav-link" href="{% url 'reg' %}">Register</a></li>
+                 <li class="nav-item"><a class="nav-link" href="{% url 'log' %}">Login</a></li>
+                {% endif %}
             </ul>
 
 <!--            <form class="d-flex">-->
@@ -52,10 +60,11 @@
 
             <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
                 <li class="nav-item">
+                    {% if user_data.is_active %}
                     <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                    {% endif %}
                 </li>
             </ul>
-
         </div>
     </div>
 </nav>
@@ -72,9 +81,10 @@
 <section class="py-5">
    <div class="container px-4 px-lg-5 mt-5">
         <div class="row  gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+            {% for i in data %}
             <div class="col mb-5">
                 <form action="{% url 'indexpage' %}" method="post">
-                    {% for i in Product %}
+
                 <div class="card h-10">
                     <!-- Product image-->
                     <img class="card-img-top" src="{{ i.product_img.url }}" alt="Image"/>
@@ -92,14 +102,12 @@
                         <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="{% url 'product_detail' i.id %}">View options</a></div>
                     </div>
                 </div>
-                  {% endfor %}
                 </form>
             </div>
+            {% endfor %}
         </div>
     </div>
 </section>
-
-
 
 <!-- Footer-->
 <footer class="py-5 bg-success">
