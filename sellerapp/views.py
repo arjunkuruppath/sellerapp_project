@@ -22,7 +22,6 @@ from django.contrib.auth.decorators import login_required
 
 def landing(request):
     data = Product.objects.all()
-    # print('data',data)
     return render(request, 'index.html', {'data': data})
 
 
@@ -46,17 +45,23 @@ def reg(request):
         password2 = request.POST['cpassword']
         profile = request.FILES['profile']
         if password == password2:
-            # if User.objects.filter(email=email).exists():
-            #     messages.info(request, 'username already taken')
-            #     return redirect('log')
-            # else:
-            user = User.objects.create_user(username=username, email=email, password=password, first_name=name,
-                                            phone=phone, profile=profile)
-            user.save()
+            if User.objects.filter(email=email).exists():
+                messages.info(request, 'email already taken')
+                return redirect('reg')
+            elif User.objects.filter(phone=phone).exists():
+                messages.info(request, 'phone number already taken')
+                return redirect('reg')
+            elif User.objects.filter(username=username).exists():
+                messages.info(request, 'username already taken')
+                return redirect('reg')
+            else:
+                user = User.objects.create_user(username=username, email=email, password=password, first_name=name,
+                                                phone=phone, profile=profile)
+                user.save()
 
             # send_mail('Registration successful', 'Login to see more!!', settings.EMAIL_HOST_USER, [email])
 
-            return render(request, 'login.html')
+                return render(request, 'login.html')
 
         else:
             messages.info(request, 'password is not matching...')
@@ -191,6 +196,12 @@ def edit_post(request, id):
         return render(request, 'edit_post.html')
 
 
+def deletedata(request,id):
+    data=Product.objects.get(id=id)
+    data.delete()
+    return redirect('my_post')
+
+
 def sendmail(request, id):
     if request.method == 'POST':
         seller_name = Product.objects.get(id=id)
@@ -214,12 +225,15 @@ def applied_product(request):
     userid = request.user
     data = BuyProduct.objects.filter(buyer_name=request.user).values('product_id')
     li = []
-    for product_id in data:
-        print(product_id['product_id'])
-        product_details = Product.objects.get(id=product_id['product_id'])
-        li.append(product_details)
-    print(product_details)
-    return render(request, "applied_product.html", {'BuyProduct': li})
+    try:
+        for product_id in data:
+            print(product_id['product_id'])
+            product_details = Product.objects.get(id=product_id['product_id'])
+            li.append(product_details)
+            return render(request, "applied_product.html", {'BuyProduct': li})
+    except Product.DoesNotExist:
+        return HttpResponse("You haven't applied any products yet!!")
+    return HttpResponse("You haven't applied any products yet")
 
 
 def buyer_list(request,id):

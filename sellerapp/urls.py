@@ -33,6 +33,7 @@ urlpatterns = [
     path('my_post/', my_post, name='my_post'),
     path('edit_post_confirm/<id>/', edit_post_confirm, name='edit_post_confirm'),
     path('edit_post/<id>', edit_post, name='edit_post'),
+    path('deletedata/<id>', deletedata, name='deletedata'),
     path('sendmail/<id>', sendmail, name='sendmail'),
     path('applied_product/', applied_product, name='applied_product'),
     path('buyer_list/<id>/', buyer_list, name='buyer_list'),

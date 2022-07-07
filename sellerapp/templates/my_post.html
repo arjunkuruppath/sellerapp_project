@@ -59,9 +59,14 @@
                             <p>Price: {{ product1.product_price }}</p>
                             <p>Location: {{ product1.location }}</p>
                         </div>
-                        <button><a href="{% url 'edit_post_confirm' product1.id %}">Edit Details</a></button>
-                        <button><a href="{% url 'buyer_list' product1.id %}">View Buyers list</a></button>
-                    </div></div>
+                        <div>
+                            <a href="{% url 'edit_post_confirm' product1.id %}" class="btn btn-success badge">EDIT DETAILS</a>&nbsp;&nbsp;
+                            <a href="{% url 'buyer_list' product1.id %}" class="btn btn-primary badge">VIEW BUYERS LIST</a>&nbsp;&nbsp;&nbsp;&nbsp;
+                            <a href="{% url 'deletedata' product1.id %}" class="btn btn-danger badge">DELETE</a>
+                        </div>
+                        <br><br>
+                        <hr>
+                    </div>
                     {% endfor %}
                 </div>
             </div>

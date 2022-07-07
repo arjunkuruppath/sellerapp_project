@@ -68,13 +68,12 @@
                     Profile Image <input type="file" class="profileimage" name="profile" required/>
                     <center><button type="submit" class="btnSubmit">Submit</button></center><br>
                     <p>Already have account &nbsp;<a href="{% url 'log' %}">login here</a> </p><br>
-
+                    <div>
+                        {% for messages in messages %}
+                        <p style="color:red;">{{messages}}</p>
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
         </div>
 </form>
-<div>
-    {% for messages in messages  %}
-        <h3>{{messages}}</h3>
-    {% endfor %}
-</div>

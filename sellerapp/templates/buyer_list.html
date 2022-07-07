@@ -46,7 +46,6 @@
         <th>BUYER NAME</th>
         <th>PRODUCT NAME</th>
         <th>INTERESTED PRICE</th>
-        <th>STATUS</th>
         <th>ACCEPT</th>
     </tr>
     <tr>
@@ -55,7 +54,6 @@
         <td>{{i.buyer_name}}</td>
         <td>{{product_name}}</td>
         <td>{{i.buyer_price}}</td>
-        <td>{{i.buy_status}}</td>
         <td>
             <a href="{% url 'accept_interest' i.id product_name.id %}" class="btn btn-success badge">ACCEPT</a>
         </td>
