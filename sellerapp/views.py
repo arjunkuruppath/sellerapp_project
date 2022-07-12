@@ -234,7 +234,7 @@ def applied_product(request):
             return render(request, "applied_product.html", {'BuyProduct': li})
     except Product.DoesNotExist:
         return HttpResponse("You haven't applied any products yet!!")
-    return HttpResponse("You haven't applied any products yet")
+    return HttpResponse("<h1>You haven't applied any products yet</h1>")
 
 
 def buyer_list(request,id):
@@ -277,11 +277,10 @@ def reject_interest(request,id,pk):
 
 
 def SearchResult(request):
-    """ search function  """
     if request.method == "POST":
         query_name = request.POST.get('name', None)
         if query_name:
-            results = Product.objects.filter(product_name__contains=query_name)
-            return render(request, 'search.html', {"results":results})
-
+            results = Product.objects.filter(product_name__icontains=query_name)
+            print(results)
+            return render(request, 'search.html', {"results":results , "query_name":query_name})
     return render(request, 'search.html')
