@@ -37,13 +37,15 @@
                 <li class="nav-item"><a class="nav-link" href="{% url 'post_product' %}">Create Post</a></li>
                 <li class="nav-item"><a class="nav-link" href="{% url 'my_post' %}">My Post</a></li>
                 <li class="nav-item"><a class="nav-link" href="{% url 'applied_product' %}">Applied Products</a></li>
-                &nbsp;&nbsp;&nbsp;{% endif %}
                 <li>
-                 <form class="d-flex">
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn btn-outline-success" type="submit">Search</button>
-                </form>
+                    <form action="{% url 'search' %}" method="POST" class="d-flex">
+                        {% csrf_token %}
+                        <input type="text" class="form-control me-2" name="name" placeholder="Search">
+                        <input type="submit" class="btn btn-outline-success" name="submit" value="Search">
+                    </form>
                 </li>
+                &nbsp;&nbsp;&nbsp;{% endif %}
+<!--                </li>-->
                 {% if not user_data.is_active %}
                  <li class="nav-item"><a class="nav-link" href="{% url 'reg' %}">Register</a></li>
                  <li class="nav-item"><a class="nav-link" href="{% url 'log' %}">Login</a></li>
@@ -69,7 +71,7 @@
     </div>
 </nav>
 <!-- Header-->
-<header class="bg-success py-5">
+<header class="bg-success py-1">
     <div class="container px-4 px-lg-5 my-5">
         <div class="text-center text-white">
             <h1 class="display-4 fw-bolder">Shop in style</h1>
@@ -84,7 +86,6 @@
             {% for i in data %}
             <div class="col mb-5">
                 <form action="{% url 'indexpage' %}" method="post">
-
                 <div class="card h-10">
                     <!-- Product image-->
                     <img class="card-img-top" src="{{ i.product_img.url }}" alt="Image"/>

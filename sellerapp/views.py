@@ -3,9 +3,10 @@ from django.conf.global_settings import EMAIL_HOST_USER
 from django.core.checks import messages
 from django.contrib import messages
 from django.core.mail import send_mail
+from django.db.models import Q
 from django.shortcuts import render, redirect
 # from .forms import EditForm
-
+from django.views import View
 
 from .models import *
 from django.http import HttpResponse
@@ -257,3 +258,30 @@ def accept_interest(request,id,pk):
     recepient = buyer_email
     send_mail(subject, message, settings.EMAIL_HOST_USER, [recepient], fail_silently=False)
     return redirect('indexpage')
+
+
+def reject_interest(request,id,pk):
+    buy_product = BuyProduct.objects.get(id=id)
+    print(pk, id)
+    seller_name = buy_product.seller_name
+    product_name = Product.objects.get(id=pk)
+    buyer_price = buy_product.buyer_price
+    buyer_name = buy_product.buyer_name
+    buyer_email = Product.objects.get(id=pk).userid.email
+    print(seller_name, buyer_price, buyer_name)
+    subject = f"Hi {buyer_name}"
+    message = f'{seller_name} has rejected your request to buy {product_name} for {buyer_price}'
+    recepient = buyer_email
+    send_mail(subject, message, settings.EMAIL_HOST_USER, [recepient], fail_silently=False)
+    return redirect('indexpage')
+
+
+def SearchResult(request):
+    """ search function  """
+    if request.method == "POST":
+        query_name = request.POST.get('name', None)
+        if query_name:
+            results = Product.objects.filter(product_name__contains=query_name)
+            return render(request, 'search.html', {"results":results})
+
+    return render(request, 'search.html')

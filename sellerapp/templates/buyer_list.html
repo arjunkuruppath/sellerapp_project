@@ -46,7 +46,7 @@
         <th>BUYER NAME</th>
         <th>PRODUCT NAME</th>
         <th>INTERESTED PRICE</th>
-        <th>ACCEPT</th>
+        <th>ACTION HERE</th>
     </tr>
     <tr>
         {% for i in obj %}
@@ -55,11 +55,12 @@
         <td>{{product_name}}</td>
         <td>{{i.buyer_price}}</td>
         <td>
-            <a href="{% url 'accept_interest' i.id product_name.id %}" class="btn btn-success badge">ACCEPT</a>
+            <a href="{% url 'accept_interest' i.id product_name.id %}" class="btn btn-success badge">SELL</a>
+            <a href="{% url 'reject_interest' i.id product_name.id %}" class="btn btn-danger badge">REJECT</a>
         </td>
     </tr>
     {% endfor %}
-    </tr>
+<!--    </tr>-->
     <br>
 </table>
 

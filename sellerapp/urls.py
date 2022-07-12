@@ -17,7 +17,7 @@ Including another URLconf
 from django.urls import path
 from .views import *
 from django.contrib.auth import views as auth_views
-
+from . import views
 urlpatterns = [
     path('',landing,name='landing'),
     path('index/',index,name='indexpage'),
@@ -38,15 +38,15 @@ urlpatterns = [
     path('applied_product/', applied_product, name='applied_product'),
     path('buyer_list/<id>/', buyer_list, name='buyer_list'),
     path('accept_interest/<id>/<pk>/', accept_interest, name='accept_interest'),
+    path('reject_interest/<id>/<pk>/', reject_interest, name='reject_interest'),
+    path('search/',SearchResult, name='search'),
 
     path('reset_password/',
          auth_views.PasswordResetView.as_view(template_name="accounts/password_reset.html"),
          name="reset_password"),
-
     path('reset_password_sent/',
          auth_views.PasswordResetDoneView.as_view(template_name="accounts/password_reset_sent.html"),
          name="password_reset_done"),
-
     path('reset/<uidb64>/<token>/',
          auth_views.PasswordResetConfirmView.as_view(template_name="accounts/password_reset_form.html"),
          name="password_reset_confirm"),
