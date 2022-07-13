@@ -2,79 +2,82 @@
 <! DOCTYPE html>
 <html lang="en">
 
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-        <meta name="description" content="" />
-        <meta name="author" content="" />
-        <title>Shop Homepage - Start Bootstrap Template</title>
-        <!-- Favicon-->
-        <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
-        <!-- Bootstrap icons-->
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
-        <!-- Core theme CSS (includes Bootstrap)-->
-<!--        <link href="{% static 'dict/css/styles.css' %}" rel="stylesheet" />-->
-        <link rel="stylesheet" href="{% static 'dist/css/styles.css' %}" type="text/css" />
-    </head>
-    <body>
-        <!-- Navigation-->
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <div class="container px-4 px-lg-5">
-                <a class="navbar-brand" href="#!">Sell&Buy</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
-                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="{% url 'indexpage' %}">Home</a></li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-        <!-- Header-->
-        <header class="bg-success py-1">
-            <div class="container px-4 px-lg-5 my-5">
-                <div class="text-center text-white">
-                    <h1 class="display-4 fw-bolder">Shop in style</h1>
-                    <p class="lead fw-normal text-white-50 mb-0">With this Sell&Buy Website</p>
-                </div>
-            </div>
-        </header><br><br><br><br>
-        <h1 style="text-align:center;">Applied Products</h1>
-        <br><br>
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <meta name="description" content=""/>
+    <meta name="author" content=""/>
+    <title>Shop Homepage - Start Bootstrap Template</title>
+    <!-- Favicon-->
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico"/>
+    <!-- Bootstrap icons-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet"/>
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <!--        <link href="{% static 'dict/css/styles.css' %}" rel="stylesheet" />-->
+    <link rel="stylesheet" href="{% static 'dist/css/styles.css' %}" type="text/css"/>
+</head>
+<body>
+<!-- Navigation-->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container px-4 px-lg-5">
+        <a class="navbar-brand" href="#!">Sell&Buy</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span
+                class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
+                <li class="nav-item"><a class="nav-link active" aria-current="page"
+                                        href="{% url 'indexpage' %}">Home</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<!-- Header-->
+<header class="bg-success py-1">
+    <div class="container px-4 px-lg-5 my-5">
+        <div class="text-center text-white">
+            <h1 class="display-4 fw-bolder">Shop in style</h1>
+            <p class="lead fw-normal text-white-50 mb-0">With this Sell&Buy Website</p>
+        </div>
+    </div>
+</header>
+<br>
+<h1 style="text-align:center;">Applied Products</h1>
 
-        <div class="container">
-            <div class="card">
-                <div class="card-header">
-                    <h2>Applied Product Details</h2>
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <h2>Applied Product Details</h2>
+        </div>
+        {% for product1 in BuyProduct %}
+        <div class="card-body">
+            <div class="container row">
+                <div class="col-md-2">
+                    <img src="{{ product1.product_img.url }}" style="height: 300px;width: 150px;" alt="Image">
                 </div>
-                {% for product1 in BuyProduct %}
-                <div class="card-body">
-                    <div class="container row">
-                        <div class="col-md-2">
-                            <img src="{{ product1.product_img.url }}" style="height: 300px;width: 150px;" alt="Image">
-                        </div>
-                        <div class="col-md-10">
-                            <h1>Product Name: {{ product1.product_name }}</h1>
-                            <p>Product Description: {{ product1.product_desc }}</p>
-                            <p>Price: {{ product1.product_price }}</p>
-                            <p>Category: {{ product1.category }}</p>
-                            <p>Location: {{ product1.location }}</p>
-                        </div>
-                        <br><br>
-                        <hr>
-                    </div>
+                <div class="col-md-10">
+                    <h4>Product Name: {{ product1.product_name }}</h4>
+                    <p>Product Description: {{ product1.product_desc }}</p>
+                    <p>Price: {{ product1.product_price }}</p>
+                    <p>Category: {{ product1.category }}</p>
+                    <p>Location: {{ product1.location }}</p>
                 </div>
-                {% endfor %}
+                <br><br>
+                <hr>
             </div>
         </div>
-                
-        <!-- Footer-->
-        <footer class="py-5 bg-success">
-            <div class="container"><p class="m-0 text-center text-white">Copyright &copy; Your Sell&Buy Website 2022</p></div>
-        </footer>
-        <!-- Bootstrap core JS-->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-        <!-- Core theme JS-->
-        <script src="js/scripts.js"></script>
-        </div>
-    </body>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Footer-->
+<footer class="py-5 bg-success">
+    <div class="container"><p class="m-0 text-center text-white">Copyright &copy; Your Sell&Buy Website 2022</p></div>
+</footer>
+<!-- Bootstrap core JS-->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Core theme JS-->
+<script src="js/scripts.js"></script>
+</div>
+</body>
 </html>

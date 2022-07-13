@@ -225,23 +225,24 @@ def sendmail(request, id):
 def applied_product(request):
     userid = request.user
     data = BuyProduct.objects.filter(buyer_name=request.user).values('product_id')
+    print(data)
     li = []
-    try:
-        for product_id in data:
-            print(product_id['product_id'])
-            product_details = Product.objects.get(id=product_id['product_id'])
-            li.append(product_details)
-            return render(request, "applied_product.html", {'BuyProduct': li})
-    except Product.DoesNotExist:
-        return HttpResponse("You haven't applied any products yet!!")
-    return HttpResponse("<h1>You haven't applied any products yet</h1>")
+    # try:
+    for product_id in data:
+        print(product_id['product_id'])
+        product_details = Product.objects.get(id=product_id['product_id'])
+        li.append(product_details)
+    return render(request, "applied_product.html", {'BuyProduct': li})
+    # except Product.DoesNotExist:
+    # return HttpResponse("<h1>You haven't applied any products yet</h1>")
+    # return HttpResponse("You haven't applied any products yet!!")
 
 
 def buyer_list(request,id):
     data = BuyProduct.objects.filter(product_id=id)
     product_name = Product.objects.get(id=id)
     print(product_name)
-    return render(request,'buyer_list.html',{'obj' : data , 'product_name' : product_name })
+    return render(request,'buyer_list.html',{'obj': data, 'product_name': product_name})
 
 
 def accept_interest(request,id,pk):
