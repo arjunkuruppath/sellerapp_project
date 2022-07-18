@@ -6,6 +6,8 @@ from django.core.mail import send_mail
 from django.db.models import Q
 from django.shortcuts import render, redirect
 # from .forms import EditForm
+from django.urls import reverse_lazy
+from django.utils.decorators import method_decorator
 from django.views import View
 
 from .models import *
@@ -17,27 +19,41 @@ from django.contrib.auth.models import auth
 from django.contrib.auth import logout, authenticate, login
 from datetime import datetime
 from django.contrib.auth.decorators import login_required
+from django.views.generic import View, DeleteView, ListView, TemplateView, UpdateView
 
 
 # from .forms import UserUpdateForm,ProfileUpdateForm,UserForm
 
-def landing(request):
-    data = Product.objects.all()
-    return render(request, 'index.html', {'data': data})
 
 
-def index(request):
-    product_data = Product.objects.all()
-    user_data = User.objects.get(username=request.user)
-    context = {}
-    context['data'] = product_data
-    context['user_data'] = user_data
-    print(user_data.is_active)
-    return render(request, "index.html", context)
+class LandingPage(TemplateView):
+    template_name = "index.html"
+    def get_context_data(self, **kwargs):
+        context = super(LandingPage, self).get_context_data(**kwargs)
+        context['data'] = Product.objects.all()
+        return context
 
 
-def reg(request):
-    if request.method == 'POST':
+# def landing(request):
+#     data = Product.objects.all()
+#     return render(request, 'index.html', {'data': data})
+
+
+class IndexView(View):
+    def get(self,request,*args,**kwargs):
+        product_data = Product.objects.all()
+        user_data = User.objects.get(username=request.user)
+        context = {}
+        context['data'] = product_data
+        context['user_data'] = user_data
+        print(user_data.is_active)
+        return render(request, "index.html", context)
+
+
+class RegistrationView(View):
+    def get(self,request):
+        return render(request, 'registration.html')
+    def post(self,request):
         username = request.POST['username']
         name = request.POST['firstname']
         phone = request.POST['phone']
@@ -60,22 +76,21 @@ def reg(request):
                                                 phone=phone, profile=profile)
                 user.save()
 
-            # send_mail('Registration successful', 'Login to see more!!', settings.EMAIL_HOST_USER, [email])
+                # send_mail('Registration successful', 'Login to see more!!', settings.EMAIL_HOST_USER, [email])
 
                 return render(request, 'login.html')
 
         else:
             messages.info(request, 'password is not matching...')
             return redirect('reg')
-    return render(request, 'registration.html')
+
 
 
 def eml(request):
     return render(request, 'email send.html')
 
-
-def log(request):
-    if request.method == 'POST':
+class LoginView(View):
+    def post(self,request):
         email = request.POST['email']
         password = request.POST['password']
         # print(email, password)
@@ -87,21 +102,30 @@ def log(request):
         else:
             messages.info(request, 'invalid credentials')
             return redirect('reg')
-    return render(request, "login.html")
+    def get(self,request):
+        return render(request, "login.html")
 
 
-@login_required(login_url='/log/')
-def show_profile(request):
-    data = User.objects.get(username=request.user)
-    # print(data)
-    return render(request, "show_profile.html", {'obj': data})
+
+@method_decorator(login_required(login_url='/log/'),name='dispatch')
+class ShowProfile(View):
+    def get(self,request):
+        data = User.objects.get(username=request.user)
+        return render(request, "show_profile.html", {'obj': data})
 
 
-@login_required(login_url='/log/')
-def edit_profile_confirm(request):
-    data = User.objects.get(username=request.user)
-    # print(data)
-    if request.method == "POST":
+# @method_decorator(login_required(login_url='/log/'),name='dispatch')
+# class EditProfileConfirm(UpdateView):
+#     model=User
+#     fields=['profile','first_name','username','phone','email']
+#     template_name="edit_profile.html"
+#     success_url =reverse_lazy('show_profile')
+
+
+@method_decorator(login_required(login_url='/log/'),name='dispatch')
+class EditProfileConfirm(View):
+    def post(self,request):
+        data = User.objects.get(username=request.user)
         if len(request.FILES) != 0:
             if len(data.profile) > 0:
                 os.remove(data.profile.path)
@@ -113,26 +137,30 @@ def edit_profile_confirm(request):
         data.save()
         messages.success(request, " Updated Successfully")
         return redirect('show_profile')
-
-    context = {'data': data}
-    return render(request, 'edit_profile.html', context)
-
-
-@login_required(login_url='/log/')
-def edit_profile(request):
-    data = User.objects.get(username=request.user)
-    return render(request, "edit_profile.html", {'obj': data})
+    def get(self,request):
+        data = User.objects.get(username=request.user)
+        context = {'data': data}
+        return render(request, 'edit_profile.html', context)
 
 
-def logoutfn(request):
-    logout(request)
-    messages.info(request, "You have successfully logged out.")
-    return redirect('landing')
+
+@method_decorator(login_required(login_url='/log/'),name='dispatch')
+class EditProfile(View):
+    def get(self,request,*args,**kwargs):
+        data = User.objects.get(username=request.user)
+        return render(request, "edit_profile.html", {'obj': data})
 
 
-@login_required(login_url='/log/')
-def post_product(request):
-    if request.method == 'POST':
+class LogOutView(View):
+    def get(self,request):
+        logout(request)
+        messages.info(request, "You have successfully logged out.")
+        return redirect('landing')
+
+
+@method_decorator(login_required(login_url='/log/'),name='dispatch')
+class PostProductView(View):
+    def post(self,request):
         product_name = request.POST.get('product_name')
         product_desc = request.POST.get('product_desc')
         category = request.POST.get('category')
@@ -149,38 +177,40 @@ def post_product(request):
         Product(product_name=product_name, product_desc=product_desc, category=category, location=location,
                 product_price=product_price, product_img=product_img, time=formated_time, userid=user_id).save()
 
-        SellerData(product_name=product_name,email=request.user.email,seller_name=request.user,seller_price=product_price).save()
+        SellerData(product_name=product_name, email=request.user.email, seller_name=request.user,
+                   seller_price=product_price).save()
         return redirect('indexpage')
 
-    return render(request, 'post_product.html')
+    def get(self,request):
+        return render(request, 'post_product.html')
 
 
-@login_required(login_url='/log/')
-def product_detail(request, id):
-    context = {}
-    context["data"] = Product.objects.get(id=id)
-    return render(request, "product_detail.html", context)
+@method_decorator(login_required(login_url='/log/'),name='dispatch')
+class ProductDetail(View):
+    def get(self,request,id):
+        context = {}
+        context["data"] = Product.objects.get(id=id)
+        return render(request, "product_detail.html", context)
 
 
-@login_required(login_url='/log/')
-def my_post(request):
-    userid = request.user
-    data = Product.objects.filter(userid_id=request.user)
-    # print(data)
-    return render(request, "my_post.html", {'Product': data, 'userid': userid})
+@method_decorator(login_required(login_url='/log/'),name='dispatch')
+class MyPost(View):
+    def get(self,request):
+        userid = request.user
+        data = Product.objects.filter(userid_id=request.user)
+        return render(request, "my_post.html", {'Product': data, 'userid': userid})
 
 
-def edit_post_confirm(request, id):
-    data = Product.objects.get(id=id)
-    # print(data)
-    return render(request, 'edit_post.html', {'data': data})
+class EditPostConfirm(View):
+    def get(self,request,id):
+        data = Product.objects.get(id=id)
+        return render(request, 'edit_post.html', {'data': data})
 
 
-@login_required(login_url='/log/')
-def edit_post(request, id):
-    data = Product.objects.get(id=id)
-    # print(data.id)
-    if request.method == "POST":
+@method_decorator(login_required(login_url='/log/'),name='dispatch')
+class EditPost(View):
+    def post(self,request,id):
+        data = Product.objects.get(id=id)
         if len(request.FILES) != 0:
             if len(data.product_img) > 0:
                 os.remove(data.product_img.path)
@@ -193,95 +223,106 @@ def edit_post(request, id):
         data.save()
         messages.success(request, " Updated Successfully")
         return redirect('my_post')
-    else:
+    def get(self,request,id):
+        data = Product.objects.get(id=id)
         return render(request, 'edit_post.html')
 
 
-def deletedata(request,id):
-    data=Product.objects.get(id=id)
-    data.delete()
-    return redirect('my_post')
+class DeleteProductView(DeleteView):
+    def get(self,request,pk):
+        data = Product.objects.get(id=pk)
+        return render(request,"product_confirm_delete.html",{'object':data})
+    def post(self,request,pk):
+        data=Product.objects.get(id=pk)
+        data.delete()
+        return redirect('my_post')
 
 
-def sendmail(request, id):
-    if request.method == 'POST':
+class SendMail(View):
+    def post(self,request,id):
         seller_name = Product.objects.get(id=id)
         buyer_name = request.user
         product_id = id
         buyer_price = request.POST['show_interest']
         buyer_status = False
-        BuyProduct(seller_name=seller_name.userid, buyer_name=buyer_name, product_id=product_id, buyer_price=buyer_price,
+        BuyProduct(seller_name=seller_name.userid, buyer_name=buyer_name, product_id=product_id,
+                   buyer_price=buyer_price,
                    buy_status=buyer_status).save()
         recepient_mailid = seller_name.userid.email
         subject = "This is Product interest message"
-        message = f'This is a verification msg ,interested product { seller_name.product_name } interested price { buyer_price}'
-        recepient =recepient_mailid
-        send_mail( subject,message,settings.EMAIL_HOST_USER, [recepient], fail_silently=False)
+        message = f'This is a verification msg ,interested product {seller_name.product_name} interested price {buyer_price}'
+        recepient = recepient_mailid
+        send_mail(subject, message, settings.EMAIL_HOST_USER, [recepient], fail_silently=False)
         messages.success(request, "sucessfuly sent a approved mail")
-    #
-    return redirect('indexpage')
+
+        return redirect('indexpage')
 
 
-def applied_product(request):
-    userid = request.user
-    data = BuyProduct.objects.filter(buyer_name=request.user).values('product_id')
-    print(data)
-    li = []
-    # try:
-    for product_id in data:
-        print(product_id['product_id'])
-        product_details = Product.objects.get(id=product_id['product_id'])
-        li.append(product_details)
-    return render(request, "applied_product.html", {'BuyProduct': li})
-    # except Product.DoesNotExist:
-    # return HttpResponse("<h1>You haven't applied any products yet</h1>")
-    # return HttpResponse("You haven't applied any products yet!!")
+class AppliedProduct(View):
+    def get(self,request):
+        userid = request.user
+        data = BuyProduct.objects.filter(buyer_name=request.user).values('product_id')
+        print(data)
+        li = []
+        # try:
+        for product_id in data:
+            print(product_id['product_id'])
+            product_details = Product.objects.get(id=product_id['product_id'])
+            li.append(product_details)
+        return render(request, "applied_product.html", {'BuyProduct': li})
 
 
-def buyer_list(request,id):
-    data = BuyProduct.objects.filter(product_id=id)
-    product_name = Product.objects.get(id=id)
-    print(product_name)
-    return render(request,'buyer_list.html',{'obj': data, 'product_name': product_name})
+class BuyersList(View):
+    def get(self,request,id):
+        data = BuyProduct.objects.filter(product_id=id)
+        product_name = Product.objects.get(id=id)
+        print(product_name)
+        return render(request, 'buyer_list.html', {'obj': data, 'product_name': product_name})
 
 
-def accept_interest(request,id,pk):
-    buy_product = BuyProduct.objects.get(id=id)
-    print(pk,id)
-    seller_name = buy_product.seller_name
-    product_name = Product.objects.get(id=pk)
-    buyer_price = buy_product.buyer_price
-    buyer_name = buy_product.buyer_name
-    buyer_email = Product.objects.get(id=pk).userid.email
-    print(seller_name,buyer_price,buyer_name)
-    subject = f"Hi {buyer_name}"
-    message = f'{seller_name} has accepted your request to buy {product_name} for {buyer_price}'
-    recepient = buyer_email
-    send_mail(subject, message, settings.EMAIL_HOST_USER, [recepient], fail_silently=False)
-    return redirect('indexpage')
+class AcceptInterest(View):
+    def get(self,request,id,pk):
+        buy_product = BuyProduct.objects.get(id=id)
+        print(pk, id)
+        seller_name = buy_product.seller_name
+        product_name = Product.objects.get(id=pk)
+        buyer_price = buy_product.buyer_price
+        buyer_name = buy_product.buyer_name
+        buyer_email = Product.objects.get(id=pk).userid.email
+        print(seller_name, buyer_price, buyer_name)
+        subject = f"Hi {buyer_name}"
+        message = f'{seller_name} has accepted your request to buy {product_name} for {buyer_price}'
+        recepient = buyer_email
+        send_mail(subject, message, settings.EMAIL_HOST_USER, [recepient], fail_silently=False)
+        return redirect('indexpage')
 
 
-def reject_interest(request,id,pk):
-    buy_product = BuyProduct.objects.get(id=id)
-    print(pk, id)
-    seller_name = buy_product.seller_name
-    product_name = Product.objects.get(id=pk)
-    buyer_price = buy_product.buyer_price
-    buyer_name = buy_product.buyer_name
-    buyer_email = Product.objects.get(id=pk).userid.email
-    print(seller_name, buyer_price, buyer_name)
-    subject = f"Hi {buyer_name}"
-    message = f'{seller_name} has rejected your request to buy {product_name} for {buyer_price}'
-    recepient = buyer_email
-    send_mail(subject, message, settings.EMAIL_HOST_USER, [recepient], fail_silently=False)
-    return redirect('indexpage')
+class RejectInterest(View):
+    def get(self,request,id,pk):
+        buy_product = BuyProduct.objects.get(id=id)
+        print(pk, id)
+        seller_name = buy_product.seller_name
+        product_name = Product.objects.get(id=pk)
+        buyer_price = buy_product.buyer_price
+        buyer_name = buy_product.buyer_name
+        buyer_email = Product.objects.get(id=pk).userid.email
+        print(seller_name, buyer_price, buyer_name)
+        subject = f"Hi {buyer_name}"
+        message = f'{seller_name} has rejected your request to buy {product_name} for {buyer_price}'
+        recepient = buyer_email
+        send_mail(subject, message, settings.EMAIL_HOST_USER, [recepient], fail_silently=False)
+        return redirect('indexpage')
 
 
-def SearchResult(request):
-    if request.method == "POST":
-        query_name = request.POST.get('name', None)
-        if query_name:
-            results = Product.objects.filter(product_name__icontains=query_name)
-            print(results)
-            return render(request, 'search.html', {"results":results , "query_name":query_name})
-    return render(request, 'search.html')
+class SearchResult(View):
+    def post(self,request):
+        if request.method == "POST":
+            query_name = request.POST.get('name', None)
+            if query_name:
+                results = Product.objects.filter(product_name__icontains=query_name)
+                print(results)
+                return render(request, 'search.html', {"results": results, "query_name": query_name})
+
+    def get(self,request):
+        return render(request, 'search.html')
+
