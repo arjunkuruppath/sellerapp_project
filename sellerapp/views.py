@@ -24,22 +24,12 @@ from django.views.generic import View, DeleteView, ListView, TemplateView, Updat
 
 # from .forms import UserUpdateForm,ProfileUpdateForm,UserForm
 
-
-
 class LandingPage(TemplateView):
-    template_name = "index.html"
-    def get_context_data(self, **kwargs):
-        context = super(LandingPage, self).get_context_data(**kwargs)
-        context['data'] = Product.objects.all()
-        return context
+    template_name = 'index.html'
+    extra_context={'data': Product.objects.all()}
 
 
-# def landing(request):
-#     data = Product.objects.all()
-#     return render(request, 'index.html', {'data': data})
-
-
-class IndexView(View):
+class IndexView(ListView):
     def get(self,request,*args,**kwargs):
         product_data = Product.objects.all()
         user_data = User.objects.get(username=request.user)
@@ -113,13 +103,6 @@ class ShowProfile(View):
         data = User.objects.get(username=request.user)
         return render(request, "show_profile.html", {'obj': data})
 
-
-# @method_decorator(login_required(login_url='/log/'),name='dispatch')
-# class EditProfileConfirm(UpdateView):
-#     model=User
-#     fields=['profile','first_name','username','phone','email']
-#     template_name="edit_profile.html"
-#     success_url =reverse_lazy('show_profile')
 
 
 @method_decorator(login_required(login_url='/log/'),name='dispatch')
