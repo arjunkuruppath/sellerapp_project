@@ -26,11 +26,11 @@ from django.views.generic import View, DeleteView, ListView, TemplateView, Updat
 
 class LandingPage(TemplateView):
     template_name = 'index.html'
-    extra_context={'data': Product.objects.all()}
+    extra_context = {'data': Product.objects.all()}
 
 
 class IndexView(ListView):
-    def get(self,request,*args,**kwargs):
+    def get(self, request, *args, **kwargs):
         product_data = Product.objects.all()
         user_data = User.objects.get(username=request.user)
         context = {}
@@ -41,9 +41,10 @@ class IndexView(ListView):
 
 
 class RegistrationView(View):
-    def get(self,request):
+    def get(self, request):
         return render(request, 'registration.html')
-    def post(self,request):
+
+    def post(self, request):
         username = request.POST['username']
         name = request.POST['firstname']
         phone = request.POST['phone']
@@ -75,12 +76,12 @@ class RegistrationView(View):
             return redirect('reg')
 
 
-
 def eml(request):
     return render(request, 'email send.html')
 
+
 class LoginView(View):
-    def post(self,request):
+    def post(self, request):
         email = request.POST['email']
         password = request.POST['password']
         # print(email, password)
@@ -92,22 +93,21 @@ class LoginView(View):
         else:
             messages.info(request, 'invalid credentials')
             return redirect('reg')
-    def get(self,request):
+
+    def get(self, request):
         return render(request, "login.html")
 
 
-
-@method_decorator(login_required(login_url='/log/'),name='dispatch')
+@method_decorator(login_required(login_url='/log/'), name='dispatch')
 class ShowProfile(View):
-    def get(self,request):
+    def get(self, request):
         data = User.objects.get(username=request.user)
         return render(request, "show_profile.html", {'obj': data})
 
 
-
-@method_decorator(login_required(login_url='/log/'),name='dispatch')
+@method_decorator(login_required(login_url='/log/'), name='dispatch')
 class EditProfileConfirm(View):
-    def post(self,request):
+    def post(self, request):
         data = User.objects.get(username=request.user)
         if len(request.FILES) != 0:
             if len(data.profile) > 0:
@@ -120,30 +120,30 @@ class EditProfileConfirm(View):
         data.save()
         messages.success(request, " Updated Successfully")
         return redirect('show_profile')
-    def get(self,request):
+
+    def get(self, request):
         data = User.objects.get(username=request.user)
         context = {'data': data}
         return render(request, 'edit_profile.html', context)
 
 
-
-@method_decorator(login_required(login_url='/log/'),name='dispatch')
+@method_decorator(login_required(login_url='/log/'), name='dispatch')
 class EditProfile(View):
-    def get(self,request,*args,**kwargs):
+    def get(self, request, *args, **kwargs):
         data = User.objects.get(username=request.user)
         return render(request, "edit_profile.html", {'obj': data})
 
 
 class LogOutView(View):
-    def get(self,request):
+    def get(self, request):
         logout(request)
         messages.info(request, "You have successfully logged out.")
         return redirect('landing')
 
 
-@method_decorator(login_required(login_url='/log/'),name='dispatch')
+@method_decorator(login_required(login_url='/log/'), name='dispatch')
 class PostProductView(View):
-    def post(self,request):
+    def post(self, request):
         product_name = request.POST.get('product_name')
         product_desc = request.POST.get('product_desc')
         category = request.POST.get('category')
@@ -164,35 +164,35 @@ class PostProductView(View):
                    seller_price=product_price).save()
         return redirect('indexpage')
 
-    def get(self,request):
+    def get(self, request):
         return render(request, 'post_product.html')
 
 
-@method_decorator(login_required(login_url='/log/'),name='dispatch')
+@method_decorator(login_required(login_url='/log/'), name='dispatch')
 class ProductDetail(View):
-    def get(self,request,id):
+    def get(self, request, id):
         context = {}
         context["data"] = Product.objects.get(id=id)
         return render(request, "product_detail.html", context)
 
 
-@method_decorator(login_required(login_url='/log/'),name='dispatch')
+@method_decorator(login_required(login_url='/log/'), name='dispatch')
 class MyPost(View):
-    def get(self,request):
+    def get(self, request):
         userid = request.user
         data = Product.objects.filter(userid_id=request.user)
         return render(request, "my_post.html", {'Product': data, 'userid': userid})
 
 
 class EditPostConfirm(View):
-    def get(self,request,id):
+    def get(self, request, id):
         data = Product.objects.get(id=id)
         return render(request, 'edit_post.html', {'data': data})
 
 
-@method_decorator(login_required(login_url='/log/'),name='dispatch')
+@method_decorator(login_required(login_url='/log/'), name='dispatch')
 class EditPost(View):
-    def post(self,request,id):
+    def post(self, request, id):
         data = Product.objects.get(id=id)
         if len(request.FILES) != 0:
             if len(data.product_img) > 0:
@@ -206,23 +206,25 @@ class EditPost(View):
         data.save()
         messages.success(request, " Updated Successfully")
         return redirect('my_post')
-    def get(self,request,id):
+
+    def get(self, request, id):
         data = Product.objects.get(id=id)
         return render(request, 'edit_post.html')
 
 
 class DeleteProductView(DeleteView):
-    def get(self,request,pk):
+    def get(self, request, pk):
         data = Product.objects.get(id=pk)
-        return render(request,"product_confirm_delete.html",{'object':data})
-    def post(self,request,pk):
-        data=Product.objects.get(id=pk)
+        return render(request, "product_confirm_delete.html", {'object': data})
+
+    def post(self, request, pk):
+        data = Product.objects.get(id=pk)
         data.delete()
         return redirect('my_post')
 
 
 class SendMail(View):
-    def post(self,request,id):
+    def post(self, request, id):
         seller_name = Product.objects.get(id=id)
         buyer_name = request.user
         product_id = id
@@ -242,7 +244,7 @@ class SendMail(View):
 
 
 class AppliedProduct(View):
-    def get(self,request):
+    def get(self, request):
         userid = request.user
         data = BuyProduct.objects.filter(buyer_name=request.user).values('product_id')
         print(data)
@@ -256,7 +258,7 @@ class AppliedProduct(View):
 
 
 class BuyersList(View):
-    def get(self,request,id):
+    def get(self, request, id):
         data = BuyProduct.objects.filter(product_id=id)
         product_name = Product.objects.get(id=id)
         print(product_name)
@@ -264,7 +266,7 @@ class BuyersList(View):
 
 
 class AcceptInterest(View):
-    def get(self,request,id,pk):
+    def get(self, request, id, pk):
         buy_product = BuyProduct.objects.get(id=id)
         print(pk, id)
         seller_name = buy_product.seller_name
@@ -281,7 +283,7 @@ class AcceptInterest(View):
 
 
 class RejectInterest(View):
-    def get(self,request,id,pk):
+    def get(self, request, id, pk):
         buy_product = BuyProduct.objects.get(id=id)
         print(pk, id)
         seller_name = buy_product.seller_name
@@ -298,7 +300,7 @@ class RejectInterest(View):
 
 
 class SearchResult(View):
-    def post(self,request):
+    def post(self, request):
         if request.method == "POST":
             query_name = request.POST.get('name', None)
             if query_name:
@@ -306,6 +308,5 @@ class SearchResult(View):
                 print(results)
                 return render(request, 'search.html', {"results": results, "query_name": query_name})
 
-    def get(self,request):
+    def get(self, request):
         return render(request, 'search.html')
-

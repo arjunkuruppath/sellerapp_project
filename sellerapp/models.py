@@ -33,7 +33,7 @@ class SellerData(models.Model):
     product_name = models.CharField(max_length=100,default=0)
     email = models.EmailField(max_length=100,null=True)
     seller_name = models.CharField(max_length=100,null=True)
-    seller_price = models.IntegerField(max_length=100,null=True)
+    seller_price = models.IntegerField(null=True)
 
     def __str__(self):
         return self.seller_name
